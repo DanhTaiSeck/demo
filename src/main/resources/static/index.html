@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Sinh viên</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f6fa;
+            color: #222;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        header {
+            background: #1a1a2e;
+            color: white;
+            padding: 18px 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        header span.badge {
+            background: #4f46e5;
+            color: white;
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+
+        .top-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            border: 0.5px solid #e0e0e0;
+            padding: 20px 24px;
+        }
+
+        .card h2 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card h2 .icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .icon-add { background: #eef2ff; color: #4f46e5; }
+        .icon-search { background: #f0fdf4; color: #16a34a; }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        input[type="text"], input[type="number"], input[type="email"] {
+            width: 100%;
+            padding: 9px 12px;
+            border: 0.5px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #222;
+            background: #fafafa;
+            outline: none;
+            transition: border 0.15s;
+        }
+
+        input:focus {
+            border-color: #4f46e5;
+            background: white;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-row input {
+            flex: 1;
+        }
+
+        btn, .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+
+        .btn:active { transform: scale(0.97); }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover { opacity: 0.9; }
+
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+
+        .btn-success:hover { opacity: 0.9; }
+
+        .btn-outline {
+            background: white;
+            color: #555;
+            border: 0.5px solid #d1d5db;
+        }
+
+        .btn-outline:hover { background: #f5f5f5; }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .btn-danger:hover { background: #fecaca; }
+
+        .btn-edit {
+            background: #eef2ff;
+            color: #4f46e5;
+            border: none;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .btn-edit:hover { background: #e0e7ff; }
+
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            border: 0.5px solid #e0e0e0;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 0.5px solid #e0e0e0;
+        }
+
+        .table-header h2 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .count-badge {
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            background: #f8f9ff;
+            padding: 11px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            border-top: 0.5px solid #f0f0f0;
+            transition: background 0.1s;
+        }
+
+        tbody tr:hover { background: #fafbff; }
+
+        tbody td {
+            padding: 13px 16px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .id-cell {
+            font-weight: 600;
+            color: #4f46e5;
+            font-size: 13px;
+        }
+
+        .name-cell {
+            font-weight: 500;
+        }
+
+        .email-cell {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .age-cell {
+            display: inline-block;
+            background: #f0fdf4;
+            color: #16a34a;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .action-cell {
+            display: flex;
+            gap: 6px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: #9ca3af;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* Update form */
+        .update-card {
+            background: white;
+            border-radius: 12px;
+            border: 2px solid #4f46e5;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .update-card h2 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #4f46e5;
+            margin-bottom: 16px;
+        }
+
+        .update-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+            z-index: 999;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .toast.show { display: block; }
+        .toast.success { background: #16a34a; }
+        .toast.error { background: #dc2626; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Quản lý Sinh viên</h1>
+    <span class="badge">Spring Boot + SQL Server</span>
+</header>
+
+<div class="container">
+
+    <div class="top-grid">
+        <!-- Thêm sinh viên -->
+        <div class="card">
+            <h2><span class="icon icon-add">+</span> Thêm sinh viên</h2>
+            <div class="form-row">
+                <input type="number" id="addId" placeholder="Mã SV">
+                <input type="text" id="addName" placeholder="Họ và tên">
+            </div>
+            <div class="form-row">
+                <input type="number" id="addAge" placeholder="Tuổi">
+                <input type="text" id="addEmail" placeholder="Email">
+            </div>
+            <button class="btn btn-primary" onclick="addStudent()">Thêm sinh viên</button>
+        </div>
+
+        <!-- Tìm kiếm -->
+        <div class="card">
+            <h2><span class="icon icon-search">🔍</span> Tìm kiếm</h2>
+            <div class="search-row" style="margin-bottom: 10px;">
+                <input type="text" id="searchName" placeholder="Nhập tên sinh viên...">
+                <button class="btn btn-success" onclick="searchStudent()">Tìm</button>
+            </div>
+            <button class="btn btn-outline" onclick="loadAll()" style="width: 100%;">Xem tất cả</button>
+        </div>
+    </div>
+
+    <!-- Form cập nhật -->
+    <div class="update-card" id="updateCard">
+        <h2>Cập nhật sinh viên</h2>
+        <div class="form-row">
+            <input type="number" id="updateId" placeholder="Mã SV" readonly style="background:#f0f0f0; color:#888;">
+            <input type="text" id="updateName" placeholder="Họ và tên">
+        </div>
+        <div class="form-row">
+            <input type="number" id="updateAge" placeholder="Tuổi">
+            <input type="text" id="updateEmail" placeholder="Email">
+        </div>
+        <div class="update-actions">
+            <button class="btn btn-primary" onclick="updateStudent()">Lưu thay đổi</button>
+            <button class="btn btn-outline" onclick="cancelUpdate()">Hủy</button>
+        </div>
+    </div>
+
+    <!-- Danh sách -->
+    <div class="table-card">
+        <div class="table-header">
+            <h2>Danh sách sinh viên</h2>
+            <span class="count-badge" id="countBadge">0 sinh viên</span>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã SV</th>
+                    <th>Họ tên</th>
+                    <th>Tuổi</th>
+                    <th>Email</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="studentTable">
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <div class="empty-icon">📋</div>
+                            <p>Đang tải dữ liệu...</p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    const API = "http://localhost:8080/students";
+
+    function showToast(msg, type = 'default') {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast show ' + type;
+        setTimeout(() => t.className = 'toast', 2500);
+    }
+
+    function loadAll() {
+        fetch(API)
+            .then(res => res.json())
+            .then(data => renderTable(data))
+            .catch(() => showToast('Không thể kết nối API!', 'error'));
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('studentTable');
+        document.getElementById('countBadge').textContent = data.length + ' sinh viên';
+
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📭</div><p>Chưa có sinh viên nào</p></div></td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = data.map(sv => `
+            <tr>
+                <td class="id-cell">#${sv.id}</td>
+                <td class="name-cell">${sv.name}</td>
+                <td><span class="age-cell">${sv.age}</span></td>
+                <td class="email-cell">${sv.email}</td>
+                <td>
+                    <div class="action-cell">
+                        <button class="btn btn-edit" onclick="editStudent(${sv.id}, '${sv.name}', ${sv.age}, '${sv.email}')">Sửa</button>
+                        <button class="btn btn-danger" onclick="deleteStudent(${sv.id})">Xóa</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function addStudent() {
+        const id = document.getElementById('addId').value;
+        const name = document.getElementById('addName').value;
+        const age = document.getElementById('addAge').value;
+        const email = document.getElementById('addEmail').value;
+
+        if (!id || !name || !age || !email) {
+            showToast('Vui lòng điền đầy đủ thông tin!', 'error');
+            return;
+        }
+
+        fetch(API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: parseInt(id), name, age: parseInt(age), email })
+        })
+        .then(() => {
+            showToast('Thêm sinh viên thành công!', 'success');
+            document.getElementById('addId').value = '';
+            document.getElementById('addName').value = '';
+            document.getElementById('addAge').value = '';
+            document.getElementById('addEmail').value = '';
+            loadAll();
+        })
+        .catch(() => showToast('Thêm thất bại!', 'error'));
+    }
+
+    function deleteStudent(id) {
+        if (!confirm('Xóa sinh viên #' + id + '?')) return;
+        fetch(`${API}/delete/${id}`, { method: 'POST' })
+            .then(() => { showToast('Đã xóa sinh viên!', 'success'); loadAll(); })
+            .catch(() => showToast('Xóa thất bại!', 'error'));
+    }
+
+    function editStudent(id, name, age, email) {
+        document.getElementById('updateCard').style.display = 'block';
+        document.getElementById('updateId').value = id;
+        document.getElementById('updateName').value = name;
+        document.getElementById('updateAge').value = age;
+        document.getElementById('updateEmail').value = email;
+        document.getElementById('updateCard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelUpdate() {
+        document.getElementById('updateCard').style.display = 'none';
+    }
+
+    function updateStudent() {
+        const id = document.getElementById('updateId').value;
+        const name = document.getElementById('updateName').value;
+        const age = document.getElementById('updateAge').value;
+        const email = document.getElementById('updateEmail').value;
+
+        fetch(`${API}/update/${id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: parseInt(id), name, age: parseInt(age), email })
+        })
+        .then(() => {
+            showToast('Cập nhật thành công!', 'success');
+            cancelUpdate();
+            loadAll();
+        })
+        .catch(() => showToast('Cập nhật thất bại!', 'error'));
+    }
+
+    function searchStudent() {
+        const name = document.getElementById('searchName').value.trim();
+        if (!name) { loadAll(); return; }
+        fetch(`${API}/search?name=${encodeURIComponent(name)}`)
+            .then(res => res.json())
+            .then(data => renderTable(data))
+            .catch(() => showToast('Tìm kiếm thất bại!', 'error'));
+    }
+
+    loadAll();
+</script>
+
+</body>
+</html>
